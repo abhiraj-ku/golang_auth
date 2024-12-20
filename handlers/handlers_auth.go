@@ -296,3 +296,32 @@ func (lac *LocalApiConfig) HandlerFetchOnlineUsers(c *gin.Context) {
 }
 
 // Handle user password reset
+func (lac *LocalApiConfig) HandlerPasswordReset(c *gin.Context) {
+	var emailType models.EmailType
+
+	if err := c.ShouldBindJSON(&emailType); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to parse email type",
+		})
+		return
+	}
+	res, err := lac.HandlerSendEmail(emailType)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to send email",
+		})
+		return
+	}
+	if res.StatusCode >= 300 {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "email service responded with error" + res.Body,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Password reset link sent successfully",
+		"result":  res,
+	})
+}
+
+// Kafka handler

@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/go-redis/redis/v9"
+	"github.com/go-redis/redis/v8"
 	"github.com/pusher/pusher-http-go/v5"
 )
 
